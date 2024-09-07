@@ -1,5 +1,5 @@
 "use client";
-import { div } from 'framer-motion/client';
+
 import React, { useState } from 'react';
 
 interface CardUIProps {

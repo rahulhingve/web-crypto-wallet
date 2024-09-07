@@ -1,21 +1,22 @@
-
+"use client"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { FlipWordsDemo } from "../ui/flip-words-list"
+import { useRouter } from "next/navigation"
+import Header from "../ui/Header"
+import Footer from "../ui/Footer"
+
 
 export function MainPage() {
+const router = useRouter()
+
+
+
   return (
     <div className="flex flex-col min-h-screen bg-[#1c1c1e] text-[#e0e0e0] font-sans">
-      <header className="flex justify-between items-center p-4 border-b border-[#2c2c2e]  pl-80 pr-80">
-        <div className="flex items-center gap-2">
-          <WalletIcon className="w-6 h-6 text-[#00ff7f]" />
-          <span className="text-xl font-medium">Crypto Wallet</span>
-        </div>
-        <div>
-           <Button>Connect</Button>
-        </div>
-       
-      </header>
+      <Header/>
       <main className="flex-1 flex flex-col items-center justify-center gap-8 p-8">
+        <FlipWordsDemo/>
         <h1 className="text-3xl font-bold">Create a New Wallet</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl">
           <div className="bg-gradient-to-r from-[#00ff7f] to-[#8b00ff] rounded-lg p-6 flex flex-col items-center gap-4">
@@ -26,7 +27,8 @@ export function MainPage() {
             <p className="text-center text-sm text-[#e0e0e0]/80">
               Create a Solana wallet to start exploring the Solana blockchain.
             </p>
-            <Button>Create Wallet</Button>
+            <Button onClick={() => router.push("/wallet?blockchain=solana")}>Create Wallet</Button>
+            
           </div>
           <div className="bg-[#2c2c2e] rounded-lg p-6 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2">
@@ -36,7 +38,7 @@ export function MainPage() {
             <p className="text-center text-sm text-[#e0e0e0]/80">
               Create an Ethereum wallet to start exploring the Ethereum blockchain.
             </p>
-            <Button>Create Wallet</Button>
+            <Button onClick={() => router.push("/wallet?blockchain=ethereum")}>Create Wallet</Button>
           </div>
           <div className="bg-gradient-to-r from-[#ff9500] to-[#ff5700] rounded-lg p-6 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2">
@@ -47,24 +49,12 @@ export function MainPage() {
             <p className="text-center text-sm text-[#e0e0e0]/80">
               Create a Bitcoin wallet to start exploring the Bitcoin blockchain.
             </p>
-            <Button>Create Wallet</Button>
+            <Button onClick={() => router.push("/wallet?blockchain=bitcoin")}>Create Wallet</Button>
+
           </div>
         </div>
       </main>
-      <footer className="flex border-t justify-between border-[#2c2c2e] p-4 pl-80 pr-80 text-center text-sm text-[#e0e0e0]/80">
-        <div className="flex  gap-4">made with ❤️ by Rahul</div>
-        <div className="flex  gap-4">
-          <Link href="#" prefetch={false}>
-            Terms of Service
-          </Link>
-          <Link href="#" prefetch={false}>
-            Privacy Policy
-          </Link>
-          <Link href="#" prefetch={false}>
-            Contact Us
-          </Link>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   )
 }

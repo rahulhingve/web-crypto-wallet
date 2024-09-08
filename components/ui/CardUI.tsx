@@ -1,5 +1,5 @@
 "use client";
-
+import { Button } from './button';
 import React, { useState } from 'react';
 
 interface CardUIProps {
@@ -62,22 +62,22 @@ const CardUI: React.FC<CardUIProps> = ({ mnemonic, publicKey, privateKey }) => {
         </div>
         <div>
         
-            <div className="mt-4">
+            <div className="mt-4 max-w-md">
                 <p className="text-sm text-gray-300">Public Key:</p>
                 <p className="text-base font-bold text-gray-900 dark:text-white">{publicKey}</p>
             </div>
 
-            <div className="mt-4 max-w-sm">
+            <div className="mt-4 max-w-md flex flex-col ">
                 <p className="text-sm text-gray-300">Private Key:</p>
-                <p className="text-base font-bold text-gray-900 dark:text-white">
+                <p className="text-base font-bold text-gray-900 dark:text-white overflow-auto ">
                     {showPrivateKey ? privateKey : '********'}
                 </p>
-                <button
+                <Button
                     onClick={() => setShowPrivateKey(!showPrivateKey)}
-                    className="w-full text-sm bg-red-500 hover:bg-red-600 text-white p-2 rounded mt-2"
+                    className="flex  items-center text-sm p-2 mt-5"
                 >
                     {showPrivateKey ? 'Hide Private Key' : 'Show Private Key'}
-                </button>
+                </Button>
             </div>
         </div>
         </div>

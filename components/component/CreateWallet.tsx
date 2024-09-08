@@ -8,6 +8,7 @@ import { derivePath } from 'ed25519-hd-key';
 import nacl from 'tweetnacl';
 import { Keypair } from '@solana/web3.js';
 import { ethers } from 'ethers';
+import { Button } from '../ui/button';
 
 const CreateWallet = ({ blockchain }: { blockchain: string }) => {
     const [mnemonic, setMnemonic] = useState('');
@@ -59,9 +60,8 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
                     <CardUI mnemonic={mnemonic} publicKey={publicKey} privateKey={privateKey} />
                     <div className="flex flex-col items-center">
                         <h1 className="text-2xl">Create a {blockchain} Wallet</h1>
-                        <button onClick={generateWallet} className="btn btn-primary">
-                            Generate Wallet
-                        </button>
+                       
+                        <Button  onClick={generateWallet} className='m-5'>   Generate Wallet</Button>
                     </div>
                 </main>
                 <Footer />

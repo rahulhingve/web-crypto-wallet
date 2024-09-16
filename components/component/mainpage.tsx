@@ -7,15 +7,15 @@ import Footer from "../ui/Footer"
 
 
 export function MainPage() {
-const router = useRouter()
+  const router = useRouter()
 
 
 
   return (
     <div className="flex flex-col min-h-screen bg-[#1c1c1e] text-[#e0e0e0] font-sans">
-      <Header/>
+      <Header />
       <main className="flex-1 flex flex-col items-center justify-center gap-8 p-8">
-        <FlipWordsDemo/>
+        <FlipWordsDemo />
         <h1 className="text-3xl font-bold">Create a New Wallet</h1>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl">
           <div className="bg-gradient-to-r from-[#00ff7f] to-[#8b00ff] rounded-lg p-6 flex flex-col items-center gap-4">
@@ -27,7 +27,7 @@ const router = useRouter()
               Create a Solana wallet to start exploring the Solana blockchain.
             </p>
             <Button onClick={() => router.push("/wallet?blockchain=solana")}>Create Wallet</Button>
-            
+
           </div>
           <div className="bg-[#2c2c2e] rounded-lg p-6 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ const router = useRouter()
           </div>
           <div className="bg-gradient-to-r from-[#ff9500] to-[#ff5700] rounded-lg p-6 flex flex-col items-center gap-4">
             <div className="flex items-center gap-2">
-            
+
               <BitcoinIcon className="w-8 h-8" />
               <span className="text-xl font-medium">Bitcoin</span>
             </div>
@@ -53,7 +53,7 @@ const router = useRouter()
           </div>
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </div>
   )
 }

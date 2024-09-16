@@ -7,9 +7,9 @@ export function FlipWordsDemo() {
   return (
     <div className=" flex justify-center items-center px-4">
       <div className="text-4xl mx-auto font-bold text-neutral-600 dark:text-neutral-400">
-        Creating Wallet With Wallx is <br /> 
+        Creating Wallet With Wallx is <br />
         <FlipWords words={words} /> <br />
-        
+
       </div>
     </div>
   );

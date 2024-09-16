@@ -78,11 +78,11 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
             derivedPublicKey = address || '';
         }
 
-      
+
         setWallets([...wallets, { publicKey: derivedPublicKey, privateKey: derivedPrivateKey }]);
         setCurrentIndex(currentIndex + 1);
 
-      
+
         localStorage.setItem('mnemonic', generatedMnemonic);
         localStorage.setItem(`${blockchain}_wallets`, JSON.stringify(wallets));
     };
@@ -133,7 +133,7 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
                     </div>
 
 
-                  
+
                     {wallets.map((wallet, index) => (
                         <CardUI
                             key={index}

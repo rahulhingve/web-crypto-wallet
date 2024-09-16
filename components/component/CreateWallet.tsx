@@ -21,6 +21,18 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
     const [mnemonic, setMnemonic] = useState('');
     const [wallets, setWallets] = useState<{ publicKey: string; privateKey: string }[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [showPhrases, setShowPhrases] = useState(false);
+
+    const renderMnemonicGrid = () => {
+        const words = mnemonic ? mnemonic.split(' ') : [];
+        const grid = [];
+        for (let i = 0; i < words.length; i += 4) {
+            grid.push(words.slice(i, i + 4));
+        }
+        return grid;
+    };
+
+
 
     const generateWallet = async () => {
         let generatedMnemonic = mnemonic;
@@ -42,7 +54,6 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
             const keypair = Keypair.fromSecretKey(secret);
             derivedPublicKey = keypair.publicKey.toBase58();
             derivedPrivateKey = Buffer.from(secret).toString('hex');
-
         } else if (blockchain === 'ethereum') {
             const derivationPath = `m/44'/60'/${currentIndex}'/0'`;
             const hdNode = HDNodeWallet.fromSeed(seed);
@@ -50,16 +61,13 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
             derivedPrivateKey = child.privateKey;
             const ethWallet = new Wallet(derivedPrivateKey);
             derivedPublicKey = ethWallet.address;
-
         } else if (blockchain === 'bitcoin') {
             const path = `m/44'/0'/${currentIndex}'/0/0`;
             const node = bip32.fromSeed(seed);
-
             const child = node.derivePath(path);
             const privateKey = child.privateKey;
 
             const publicKeyBuffer = Buffer.from(child.publicKey);
-
             const { address } = bitcoin.payments.p2pkh({
                 pubkey: publicKeyBuffer,
                 network: bitcoin.networks.bitcoin,
@@ -67,13 +75,14 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
 
             const keyPair = ECPair.fromPrivateKey(privateKey, { compressed: true });
             derivedPrivateKey = keyPair.toWIF();
-
             derivedPublicKey = address || '';
         }
 
+      
         setWallets([...wallets, { publicKey: derivedPublicKey, privateKey: derivedPrivateKey }]);
         setCurrentIndex(currentIndex + 1);
 
+      
         localStorage.setItem('mnemonic', generatedMnemonic);
         localStorage.setItem(`${blockchain}_wallets`, JSON.stringify(wallets));
     };
@@ -83,13 +92,54 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
             <div className="flex flex-col min-h-screen bg-[#1c1c1e] text-[#e0e0e0] font-sans">
                 <Header />
                 <main className="flex-1 flex flex-col items-center justify-center gap-8 p-8">
+
+
+                    <div >
+                        {mnemonic && (
+                            <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
+                                <h3 className="text-lg font-bold mb-2">Mnemonic Phrases</h3>
+                                <div className="my-4 space-y-3">
+                                    {mnemonic && (
+                                        <div className="mb-4 p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
+                                            <div className="my-4 space-y-3">
+                                                {renderMnemonicGrid().map((row, index) => (
+                                                    <ul key={index} className="flex space-x-2">
+                                                        {row.map((word, idx) => (
+                                                            <li key={idx}>
+                                                                <a
+                                                                    href="#"
+                                                                    className="flex items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+                                                                >
+                                                                    <span className="flex-1 ms-3 whitespace-nowrap">
+                                                                        {showPhrases ? word : '****'}
+                                                                    </span>
+                                                                </a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ))}
+                                            </div>
+                                            <button
+                                                onClick={() => setShowPhrases(!showPhrases)}
+                                                className="w-full text-sm bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+                                            >
+                                                {showPhrases ? 'Hide Mnemonic Phrases' : 'Show Mnemonic Phrases'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+
+                  
                     {wallets.map((wallet, index) => (
-                        <CardUI 
-                            key={index} 
-                            mnemonic={index === 0 ? mnemonic : ''} 
-                            publicKey={wallet.publicKey} 
-                            privateKey={wallet.privateKey} 
-                            accountNumber={`Account ${index + 1}`} 
+                        <CardUI
+                            key={index}
+                            publicKey={wallet.publicKey}
+                            privateKey={wallet.privateKey}
+                            accountNumber={`Account ${index + 1}`}
                         />
                     ))}
 

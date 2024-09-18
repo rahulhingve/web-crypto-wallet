@@ -12,7 +12,7 @@ export function MainPage() {
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#1c1c1e] text-[#e0e0e0] font-sans">
+    <div className="flex flex-col min-h-screen bg-[#000000] text-[#e0e0e0] font-sans">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center gap-8 p-8">
         <FlipWordsDemo />

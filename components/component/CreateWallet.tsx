@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../ui/Header';
 import Footer from '../ui/Footer';
 import CardUI from '../ui/CardUI';
@@ -23,6 +23,19 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showPhrases, setShowPhrases] = useState(false);
 
+    useEffect(() => {
+        const storedMnemonic = localStorage.getItem(`${blockchain}_mnemonic`);
+        const storedWallets = JSON.parse(localStorage.getItem(`${blockchain}_wallets`) || "[]");
+
+        if (storedMnemonic) {
+            setMnemonic(storedMnemonic);
+        }
+        if (storedWallets) {
+            setWallets(storedWallets);
+            setCurrentIndex(storedWallets.length);
+        }
+    }, [blockchain]);
+
     const renderMnemonicGrid = () => {
         const words = mnemonic ? mnemonic.split(' ') : [];
         const grid = [];
@@ -32,18 +45,16 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
         return grid;
     };
 
-
-
     const generateWallet = async () => {
         let generatedMnemonic = mnemonic;
 
         if (!generatedMnemonic) {
             generatedMnemonic = generateMnemonic();
             setMnemonic(generatedMnemonic);
+            localStorage.setItem(`${blockchain}_mnemonic`, generatedMnemonic);
         }
 
         const seed = await mnemonicToSeedSync(generatedMnemonic);
-
         let derivedPublicKey = '';
         let derivedPrivateKey = '';
 
@@ -78,61 +89,61 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
             derivedPublicKey = address || '';
         }
 
-
-        setWallets([...wallets, { publicKey: derivedPublicKey, privateKey: derivedPrivateKey }]);
+      
+        const newWallets = [...wallets, { publicKey: derivedPublicKey, privateKey: derivedPrivateKey }];
+        setWallets(newWallets);
         setCurrentIndex(currentIndex + 1);
+        
+        localStorage.setItem(`${blockchain}_wallets`, JSON.stringify(newWallets));
+    };
 
-
-        localStorage.setItem('mnemonic', generatedMnemonic);
-        localStorage.setItem(`${blockchain}_wallets`, JSON.stringify(wallets));
+  
+    const deleteWallet = (index: number) => {
+      
+        const updatedWallets = wallets.filter((_, i) => i !== index);
+      
+        setWallets(updatedWallets);
+        
+      
+        localStorage.setItem(`${blockchain}_wallets`, JSON.stringify(updatedWallets));
     };
 
     return (
         <div>
-            <div className="flex flex-col min-h-screen bg-[#1c1c1e] text-[#e0e0e0] font-sans">
+            <div className="flex flex-col min-h-screen bg-[#000000] text-[#e0e0e0] font-sans">
                 <Header />
                 <main className="flex-1 flex flex-col items-center justify-center gap-8 p-8">
-
-
-                    <div >
+                    <div>
                         {mnemonic && (
                             <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
                                 <h3 className="text-lg font-bold mb-2">Mnemonic Phrases</h3>
                                 <div className="my-4 space-y-3">
-                                    {mnemonic && (
-                                        <div className="mb-4 p-4 bg-gray-100 rounded-lg dark:bg-gray-700">
-                                            <div className="my-4 space-y-3">
-                                                {renderMnemonicGrid().map((row, index) => (
-                                                    <ul key={index} className="flex space-x-2">
-                                                        {row.map((word, idx) => (
-                                                            <li key={idx}>
-                                                                <a
-                                                                    href="#"
-                                                                    className="flex items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
-                                                                >
-                                                                    <span className="flex-1 ms-3 whitespace-nowrap">
-                                                                        {showPhrases ? word : '****'}
-                                                                    </span>
-                                                                </a>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                ))}
-                                            </div>
-                                            <button
-                                                onClick={() => setShowPhrases(!showPhrases)}
-                                                className="w-full text-sm bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
-                                            >
-                                                {showPhrases ? 'Hide Mnemonic Phrases' : 'Show Mnemonic Phrases'}
-                                            </button>
-                                        </div>
-                                    )}
+                                    {renderMnemonicGrid().map((row, index) => (
+                                        <ul key={index} className="flex space-x-2">
+                                            {row.map((word, idx) => (
+                                                <li key={idx}>
+                                                    <a
+                                                        href="#"
+                                                        className="flex items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+                                                    >
+                                                        <span className="flex-1 ms-3 whitespace-nowrap">
+                                                            {showPhrases ? word : '****'}
+                                                        </span>
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ))}
+                                    <button
+                                        onClick={() => setShowPhrases(!showPhrases)}
+                                        className="w-full text-sm bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
+                                    >
+                                        {showPhrases ? 'Hide Mnemonic Phrases' : 'Show Mnemonic Phrases'}
+                                    </button>
                                 </div>
                             </div>
                         )}
                     </div>
-
-
 
                     {wallets.map((wallet, index) => (
                         <CardUI
@@ -140,6 +151,7 @@ const CreateWallet = ({ blockchain }: { blockchain: string }) => {
                             publicKey={wallet.publicKey}
                             privateKey={wallet.privateKey}
                             accountNumber={`Account ${index + 1}`}
+                            onDelete={() => deleteWallet(index)} 
                         />
                     ))}
 
